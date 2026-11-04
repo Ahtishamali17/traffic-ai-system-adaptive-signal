@@ -1,0 +1,42 @@
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# --- Environment ---
+.env
+*.env.local
+
+# --- Storage / runtime data ---
+backend/storage/
+!backend/storage/.gitkeep
+
+# --- Model weights (large binaries; document how to fetch instead) ---
+models/weights/*.pt
+models/weights/*.onnx
+models/weights/*.engine
+!models/weights/.gitkeep
+
+# --- Node / Frontend ---
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+
+# --- Datasets (usually large; fetch via script instead) ---
+datasets/*
+!datasets/.gitkeep
