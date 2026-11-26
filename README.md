@@ -1,181 +1,544 @@
-# Sentry — AI-Powered Intelligent Traffic Monitoring & Vehicle Detection System
+# 🚦 Sentry — AI-Powered Intelligent Traffic Monitoring & Adaptive Signal System
 
-Real-time vehicle detection, tracking, speed estimation, violation
-detection, and traffic analytics — for CCTV, dashcam, webcam, drone, and
-uploaded video sources.
+> **A Deep Learning + NLP based intelligent traffic management system for real-time vehicle detection, tracking, violation monitoring, adaptive signal intelligence, traffic analytics, and automated complaint prioritization.**
 
-**Status: feature-complete across all 10 build phases.** 37/37 backend
-tests passing; frontend build verified. See [Verification](#verification)
-below for exactly what was tested and how.
+Sentry combines **Computer Vision, Deep Learning, Natural Language Processing (NLP), and intelligent traffic analytics** into a single platform for modern traffic monitoring and management.
 
-## Tech Stack
+The system analyzes live or uploaded traffic footage to detect and track vehicles, estimate speed, identify violations, monitor traffic density, and generate analytics. It also includes an **NLP-powered Complaints Intelligence module** that understands English traffic complaints, classifies them into relevant categories, and automatically determines whether a complaint requires **Urgent** or **Normal** attention.
 
-| Layer      | Technology |
-|------------|------------|
-| Detection  | YOLOv8 (Ultralytics), PyTorch |
-| Tracking   | DeepSORT |
-| Backend    | FastAPI, OpenCV, NumPy, Pandas |
-| Frontend   | React, Vite, TailwindCSS, Framer Motion, Chart.js |
-| Database   | MongoDB |
-| Deployment | Docker, Nginx, GitHub Actions |
+---
 
-## Features
+## 🧠 AI at the Core
 
-- **Detection**: 8 vehicle classes (car, truck, bus, motorcycle, bicycle,
-  auto-rickshaw, van, emergency vehicle — the last 3 need a custom-trained
-  model, see [docs/dataset-and-training-guide.md](docs/dataset-and-training-guide.md))
-  across webcam, RTSP/IP camera, and uploaded video sources
-- **Tracking**: permanent per-vehicle IDs via DeepSORT, path history,
-  object lifetime, motion direction
-- **Counting**: configurable virtual entry/exit line, per-class and total counts
-- **Speed estimation**: calibrated pixel-displacement speed with overspeed flagging
-- **Violations**: wrong-direction, lane violation, red-light-jump (simulated
-  signal), illegal U-turn, no-parking
-- **Alerts**: rate-limited Telegram + email notifications on violations,
-  overspeed, crowded areas, and loitering
-- **Analytics**: hourly/daily counts, class distribution, peak-hour detection,
-  violation totals — aggregated from MongoDB
-- **Reports**: CSV, multi-sheet Excel, and formatted PDF export
-- **Heatmaps**: accumulated traffic-density overlay per camera
-- **Dashboard**: live MJPEG stream viewer, charts, session controls, report
-  downloads — dark "traffic ops room" themed React UI
-- **Multi-camera**: each session runs independently in its own thread
+Sentry contains two major AI pipelines:
 
-## Project Structure
+### 1. 🚗 Computer Vision & Deep Learning
 
+Traffic video is processed using:
+
+- **YOLOv8 (Ultralytics)** — real-time vehicle detection
+- **PyTorch** — deep learning framework
+- **DeepSORT** — multi-object vehicle tracking
+- **OpenCV** — video processing and computer vision
+- Speed estimation and trajectory analysis
+- Traffic density and heatmap generation
+- Rule-based traffic violation detection
+
+### 2. 🗣️ Natural Language Processing (NLP)
+
+The **Complaints (NLP)** module processes English-language traffic complaints using:
+
+- **TF-IDF** for text feature extraction
+- **Logistic Regression** for complaint classification
+- Safety-keyword based priority detection
+- Automatic complaint categorization
+- Urgent vs Normal priority classification
+
+The NLP pipeline runs locally on the CPU and does not require a GPU, internet connection, or external API key for prediction.
+
+---
+
+## ✨ Key Features
+
+### 🚘 Vehicle Detection
+
+Detects vehicles from:
+
+- Webcam
+- CCTV/IP camera
+- RTSP streams
+- Dashcam footage
+- Drone footage
+- Uploaded videos
+
+Supported vehicle classes include:
+
+- Car
+- Truck
+- Bus
+- Motorcycle
+- Bicycle
+- Auto-rickshaw
+- Van
+- Emergency vehicle
+
+> Custom-trained models are required for some specialized vehicle classes.
+
+### 🎯 Vehicle Tracking
+
+DeepSORT provides persistent vehicle tracking with:
+
+- Unique vehicle IDs
+- Vehicle trajectories
+- Object lifetime tracking
+- Motion direction
+- Entry/exit tracking
+- Multi-object tracking
+
+### 🚦 Adaptive Traffic Signal Intelligence
+
+The system uses traffic information such as:
+
+- Vehicle count
+- Traffic density
+- Lane congestion
+- Peak traffic periods
+- Direction-wise traffic flow
+
+to support intelligent traffic signal decisions rather than relying only on fixed timing.
+
+### ⚠️ Traffic Violation Detection
+
+The system can identify:
+
+- Wrong-direction driving
+- Lane violations
+- Red-light jumping
+- Illegal U-turns
+- No-parking violations
+- Overspeeding
+
+### 🗣️ NLP-Based Complaint Intelligence
+
+Users can enter natural-language English traffic complaints, and the system automatically determines the complaint category.
+
+#### Supported Categories
+
+| Category | Example |
+|---|---|
+| 🚦 Traffic Congestion | Heavy traffic and vehicles are stuck |
+| 💥 Accident | Two vehicles have crashed |
+| 🚥 Signal Fault | Traffic signal is not working |
+| 🅿️ Illegal Parking | Cars are parked illegally |
+| 🏎️ Rash Driving | A vehicle is being driven dangerously |
+| 🛣️ Road Damage | Road is damaged or has potholes |
+
+### 🚨 Automatic Complaint Priority
+
+The NLP module determines whether a complaint should be treated as **Urgent** or **Normal**.
+
+Safety-related keywords include:
+
+`injury`, `bleeding`, `ambulance`, `fire`, `trapped`, `open manhole`
+
+Example:
+
+> **Complaint:** "There is an accident near the signal and someone is bleeding."
+
+**Category:** Accident  
+**Priority:** 🔴 Urgent  
+**Reason:** Safety keyword detected — `bleeding`
+
+Negative statements such as:
+
+> "No injuries and nobody is hurt."
+
+do not trigger the safety-keyword priority rule.
+
+---
+
+## 🤖 NLP Pipeline
+
+```text
+English Traffic Complaint
+          │
+          ▼
+     Text Processing
+          │
+          ▼
+    TF-IDF Vectorization
+          │
+          ▼
+   Logistic Regression
+          │
+          ▼
+   Complaint Category
+          │
+          ▼
+   Priority Analysis
+          │
+          ▼
+   Safety Keyword Rules
+          │
+          ▼
+    Urgent / Normal
 ```
-traffic-ai-system/
+
+---
+
+## 🏗️ System Architecture
+
+```text
+                    ┌──────────────────────────┐
+                    │        SENTRY AI         │
+                    │  Intelligent Traffic AI  │
+                    └────────────┬─────────────┘
+                                 │
+              ┌──────────────────┴──────────────────┐
+              │                                     │
+              ▼                                     ▼
+   Computer Vision Pipeline                  NLP Pipeline
+              │                                     │
+        YOLOv8 Detection                       Text Input
+              │                                     │
+        DeepSORT Tracking                      TF-IDF
+              │                                     │
+       Speed Estimation                   Logistic Regression
+              │                                     │
+      Violation Detection                      Category
+              │                                     │
+       Traffic Analytics                       Priority
+              │                                     │
+              └──────────────────┬──────────────────┘
+                                 │
+                                 ▼
+                      Intelligent Dashboard
+```
+
+---
+
+## 📊 Traffic Analytics
+
+The dashboard provides:
+
+- Hourly vehicle counts
+- Daily traffic statistics
+- Vehicle-class distribution
+- Peak-hour detection
+- Violation statistics
+- Traffic-density heatmaps
+- Camera/session analytics
+- Historical traffic information
+
+---
+
+## 📈 Dashboard
+
+The React dashboard provides a centralized traffic operations interface with:
+
+- 🏠 Dashboard
+- 🎥 Live Detection
+- 📊 Analytics
+- 🗣️ **Complaints (NLP)**
+- 📄 Reports
+- ⚙️ Settings
+- ℹ️ About
+
+The interface uses a dark **traffic operations room** style for monitoring traffic activity.
+
+---
+
+## 🔔 Alerts
+
+Automated notifications can be configured for:
+
+- Traffic violations
+- Overspeeding
+- Crowded areas
+- Loitering
+- Other configured traffic events
+
+Supported alert channels:
+
+- Telegram
+- Email
+
+---
+
+## 📄 Reports
+
+Traffic information can be exported as:
+
+- CSV
+- Excel
+- PDF
+
+Reports can include traffic counts, vehicle distribution, violations, and analytics.
+
+---
+
+## 🗂️ Project Structure
+
+```text
+traffic-ai-system-adaptive-signal/
+│
 ├── backend/
 │   ├── app/
-│   │   ├── api/          # REST route handlers (detection, analytics, reports)
-│   │   ├── core/         # config, logging, database, vehicle class mapping
-│   │   ├── schemas/      # Pydantic request/response models
-│   │   ├── services/     # detector, tracker session, alerts, analytics, reports, heatmap
-│   │   ├── tracking/     # DeepSORT wrapper + trajectory store
-│   │   ├── violations/   # rule-based violation detectors
-│   │   ├── utils/        # drawing, geometry helpers
-│   │   └── tests/        # pytest suite (37 tests)
-│   ├── scripts/          # weight download, ONNX/TensorRT export
-│   ├── tests/            # stress_test.py (live load test, not pytest)
+│   │   ├── api/              # REST API routes
+│   │   ├── core/             # Configuration, database, logging
+│   │   ├── nlp/              # NLP complaint classification
+│   │   ├── schemas/          # Pydantic schemas
+│   │   ├── services/         # Detection, analytics, reports, alerts
+│   │   ├── tracking/         # DeepSORT tracking
+│   │   ├── violations/       # Violation detection
+│   │   ├── utils/            # Utility functions
+│   │   └── tests/            # Backend tests
+│   │
+│   ├── scripts/
 │   └── requirements.txt
-├── frontend/              # React + Vite + Tailwind dashboard
+│
+├── frontend/
 │   └── src/
-│       ├── api/           # backend API client
-│       ├── components/    # Sidebar, TopBar, StatCard
-│       └── pages/         # Landing, Dashboard, LiveDetection, Analytics, Reports, Settings, About
+│       ├── api/              # Backend API client
+│       ├── components/       # UI components
+│       └── pages/
+│           ├── Dashboard
+│           ├── LiveDetection
+│           ├── Analytics
+│           ├── Complaints
+│           ├── Reports
+│           ├── Settings
+│           └── About
+│
 ├── deployment/
-│   ├── docker/            # backend + frontend Dockerfiles
-│   └── nginx/             # SPA + reverse-proxy config
-├── docs/                  # architecture, API, dataset/training, deployment, performance, roadmap
-├── .github/workflows/     # CI: backend tests, frontend build, docker build
-├── models/weights/        # YOLOv8 weight files (not committed)
+│   ├── docker/
+│   └── nginx/
+│
+├── docs/
+├── models/
+│   └── weights/              # Model weights (not committed)
+│
 ├── docker-compose.yml
 └── .gitignore
 ```
 
-## Quick Start
+---
 
-### Docker (full stack)
+## 🛠️ Tech Stack
+
+| Layer | Technologies |
+|---|---|
+| **AI / Deep Learning** | YOLOv8, PyTorch |
+| **Computer Vision** | OpenCV |
+| **Object Tracking** | DeepSORT |
+| **NLP** | TF-IDF, Logistic Regression |
+| **Backend** | FastAPI, Python |
+| **Frontend** | React, Vite, TailwindCSS, Framer Motion |
+| **Visualization** | Chart.js |
+| **Database** | MongoDB |
+| **Data Processing** | NumPy, Pandas |
+| **Deployment** | Docker, Nginx |
+| **Testing** | Pytest |
+| **CI/CD** | GitHub Actions |
+
+---
+
+## 🚀 Quick Start
+
+### Clone the Repository
 
 ```bash
-git clone <your-repo-url>
-cd traffic-ai-system
-cp backend/.env.example backend/.env
-docker compose up --build
+git clone https://github.com/Ahtishamali17/traffic-ai-system-adaptive-signal.git
+cd traffic-ai-system-adaptive-signal
 ```
 
-- Backend API docs: http://localhost:8000/api/docs
-- Frontend dashboard: http://localhost:5173
-
-### Local development
+### Backend Setup
 
 ```bash
-# Backend
 cd backend
-python -m venv venv && source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-python scripts/download_weights.py --model yolov8n.pt
-uvicorn app.main:app --reload
+python -m venv venv
+```
 
-# Frontend (separate terminal)
+**Windows:**
+```bash
+venv\Scripts\activate
+```
+
+**Linux / macOS:**
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create environment configuration:
+
+```bash
+copy .env.example .env
+```
+
+Start the backend:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Backend API:
+
+`http://localhost:8000`
+
+API documentation:
+
+`http://localhost:8000/api/docs`
+
+### Frontend Setup
+
+Open a second terminal:
+
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Full setup details, GPU configuration, and troubleshooting:
-[docs/installation-guide.md](docs/installation-guide.md).
+Frontend dashboard:
 
-## Try it end-to-end
+`http://localhost:5173`
+
+---
+
+## 🐳 Docker
+
+For a full-stack Docker setup:
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/detection/start \
-  -H "Content-Type: application/json" \
-  -d '{
-    "source_type": "webcam", "source": "0", "camera_id": "gate-1",
-    "counting_line": {"point_a": {"x": 0, "y": 240}, "point_b": {"x": 640, "y": 240}},
-    "pixels_per_meter": 8.0, "speed_limit_kmph": 60,
-    "violations": {"enable_violations": true, "correct_direction_deg": 0},
-    "enable_alerts": true
-  }'
-
-# Live annotated stream:
-#   http://localhost:8000/api/v1/detection/stream/<session_id>
-# Live counts:
-curl http://localhost:8000/api/v1/detection/sessions/<session_id>/counts
-# Analytics summary:
-curl http://localhost:8000/api/v1/analytics/summary?days=7
-# PDF report:
-curl -OJ http://localhost:8000/api/v1/reports/pdf?days=7
+docker compose up --build
 ```
 
-Full endpoint reference: [docs/api-documentation.md](docs/api-documentation.md).
+This project includes Docker configuration for the backend and frontend, along with Nginx deployment configuration.
 
-## Documentation
+---
 
-| Doc | Covers |
-|-----|--------|
-| [docs/architecture.md](docs/architecture.md) | System diagram, component responsibilities, threading model |
-| [docs/api-documentation.md](docs/api-documentation.md) | Every endpoint, with a full example request |
-| [docs/installation-guide.md](docs/installation-guide.md) | Setup for Docker and local dev, GPU config, troubleshooting |
-| [docs/deployment-guide.md](docs/deployment-guide.md) | Production deployment, hardening checklist, scaling notes |
-| [docs/dataset-and-training-guide.md](docs/dataset-and-training-guide.md) | Training a custom model for auto-rickshaw/van/emergency-vehicle classes |
-| [docs/performance-guide.md](docs/performance-guide.md) | GPU, ONNX/TensorRT export, model size tradeoffs, frame skipping |
-| [docs/future-improvements.md](docs/future-improvements.md) | Known limitations and prioritized next steps |
+## 🧪 Testing
 
-## Verification
+Backend tests can be executed using:
 
-Everything below was actually executed during development, not assumed:
+```bash
+cd backend
+PYTHONPATH=. pytest app/tests/ -v
+```
 
-- **Backend**: all 37 pytest tests pass (`cd backend && PYTHONPATH=. pytest app/tests/ -v`),
-  covering vehicle-class mapping, drawing, trajectory/line-counting/speed
-  math, all 5 violation detectors, heatmap accumulation, and report
-  generation (CSV/Excel/PDF byte-level checks).
-- **Backend boot**: the full FastAPI app boots cleanly with all 14 REST
-  endpoints registered, confirmed via its own OpenAPI schema.
-- **Frontend**: `npm install` + `npm run build` both succeed, producing a
-  real production bundle (465 modules transformed) — this caught and fixed
-  one real bug (an invalid unquoted object key in `tailwind.config.js`)
-  before delivery.
+The test suite covers major backend logic including:
 
-**Not exercised live in this environment** (documented, not hidden): YOLOv8
-inference and DeepSORT tracking require `torch`/`ultralytics`/
-`deep-sort-realtime`, which weren't installed here (multi-GB, no GPU
-available in the build sandbox). The code is correct against each
-library's documented API and covered by unit tests for all the logic
-around it, but you should smoke-test actual detection against a real
-camera/video after `pip install -r requirements.txt` in your own environment.
+- Vehicle-class mapping
+- Drawing utilities
+- Trajectory logic
+- Line counting
+- Speed calculation
+- Violation detection
+- Heatmap accumulation
+- Report generation
+- CSV/Excel/PDF generation
 
-## Roadmap Status
+---
 
-1. ✅ Project foundation — config, logging, MongoDB, Docker
-2. ✅ Detection engine — YOLOv8, video/webcam/RTSP ingestion, upload API
-3. ✅ DeepSORT tracking — permanent IDs, trajectories, entry/exit counting, speed
-4. ✅ Violation detection — wrong-direction, lane, red-light-jump, U-turn, no-parking
-5. ✅ Alerts — Telegram, email, rate-limited dispatch
-6. ✅ Analytics & reports — MongoDB aggregation, CSV/Excel/PDF export
-7. ✅ React dashboard — live feed, stats, charts, dark UI
-8. ✅ Multi-camera, ROI/polygon zones, heatmaps
-9. ✅ Performance — CUDA/ONNX/TensorRT export scripts, tuning guide
-10. ✅ Testing, CI/CD, deployment docs, architecture diagram
+## 🔬 NLP Examples
+
+### Example 1 — Accident
+
+**Input:**
+```text
+There is a major accident near the signal. A person is bleeding and needs an ambulance.
+```
+
+**Output:**
+```text
+Category: Accident
+Priority: Urgent
+Reason: Safety keyword detected — bleeding
+```
+
+### Example 2 — Traffic Congestion
+
+**Input:**
+```text
+There is heavy traffic near the main road and vehicles are stuck.
+```
+
+**Output:**
+```text
+Category: Traffic Congestion
+Priority: Normal
+```
+
+### Example 3 — Signal Fault
+
+**Input:**
+```text
+The traffic signal is not working at the intersection.
+```
+
+**Output:**
+```text
+Category: Signal Fault
+Priority: Normal
+```
+
+---
+
+## 🔐 Security & Configuration
+
+Do not commit sensitive configuration to GitHub.
+
+Keep values such as the following inside `.env`:
+
+```text
+DATABASE_URL
+TELEGRAM_BOT_TOKEN
+EMAIL_PASSWORD
+SECRET_KEY
+```
+
+Model weights and large generated files should also be excluded from Git where appropriate.
+
+---
+
+## 📌 Project Status
+
+### Completed
+
+- ✅ YOLOv8 vehicle detection
+- ✅ DeepSORT vehicle tracking
+- ✅ Speed estimation
+- ✅ Vehicle counting
+- ✅ Traffic violation detection
+- ✅ Traffic analytics
+- ✅ Traffic-density heatmaps
+- ✅ Adaptive traffic signal intelligence
+- ✅ Multi-camera support
+- ✅ Alert system
+- ✅ CSV/Excel/PDF reports
+- ✅ React dashboard
+- ✅ NLP complaint classification
+- ✅ TF-IDF feature extraction
+- ✅ Logistic Regression classification
+- ✅ Automatic complaint priority detection
+- ✅ Backend testing
+- ✅ Frontend production build
+- ✅ Docker/deployment structure
+
+---
+
+## 🔮 Future Improvements
+
+- Real-time adaptive signal control using reinforcement learning
+- Advanced traffic prediction
+- Multilingual complaint classification
+- Transformer-based NLP models
+- Automatic emergency response routing
+- License plate recognition
+- Real-time GIS/map integration
+- Advanced anomaly detection
+- Large-scale multi-camera traffic intelligence
+
+---
+
+## 👨‍💻 Author
+
+**Ahtisham Ali**
+
+GitHub: [@Ahtishamali17](https://github.com/Ahtishamali17)
+
+---
+
+## ⭐ Project Vision
+
+Sentry brings together **Deep Learning + Computer Vision + NLP + Traffic Analytics** into one intelligent traffic management platform.
+
+The system doesn't only understand **what is happening on the road through video**, but also understands **what people are reporting through natural language**.
+
+> **See the traffic. Understand the complaint. Detect the problem. Prioritize the response.**
