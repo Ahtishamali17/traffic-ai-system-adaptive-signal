@@ -9,6 +9,8 @@ life of the app instead of reconnecting per-request.
 --------------------------------------------------------------------
 """
 
+from urllib.parse import urlparse
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from pymongo import MongoClient
 from pymongo.database import Database
@@ -36,7 +38,7 @@ async def connect_to_mongo() -> None:
         mongo_manager.db = mongo_manager.client[settings.MONGO_DB_NAME]
         # The ping command is cheap and confirms the server is reachable.
         await mongo_manager.client.admin.command("ping")
-        logger.info(f"Connected to MongoDB at {settings.MONGO_URI}")
+        logger.info(f"Connected to MongoDB at {urlparse(settings.MONGO_URI).hostname}")
         await _ensure_indexes()
     except Exception as exc:
         logger.error(f"Failed to connect to MongoDB: {exc}")

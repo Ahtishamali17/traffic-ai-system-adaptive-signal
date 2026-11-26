@@ -7,12 +7,14 @@ import {
   LuSettings,
   LuInfo,
   LuRadar,
+  LuMessageSquare,
 } from 'react-icons/lu'
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: LuLayoutDashboard },
   { to: '/live', label: 'Live Detection', icon: LuVideo },
   { to: '/analytics', label: 'Analytics', icon: LuChartLine },
+  { to: '/complaints', label: 'Complaints (NLP)', icon: LuMessageSquare },
   { to: '/reports', label: 'Reports', icon: LuFileText },
   { to: '/settings', label: 'Settings', icon: LuSettings },
   { to: '/about', label: 'About', icon: LuInfo },

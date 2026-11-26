@@ -109,11 +109,12 @@ async def health_check():
 # ---------------------------------------------------------------------
 # Routers
 # ---------------------------------------------------------------------
-from app.api import analytics, detection, reports  # noqa: E402
+from app.api import analytics, complaints, detection, reports  # noqa: E402
 
 app.include_router(detection.router, prefix=settings.API_PREFIX)
 app.include_router(analytics.router, prefix=settings.API_PREFIX)
 app.include_router(reports.router, prefix=settings.API_PREFIX)
+app.include_router(complaints.router, prefix=settings.API_PREFIX)
 
 
 if __name__ == "__main__":

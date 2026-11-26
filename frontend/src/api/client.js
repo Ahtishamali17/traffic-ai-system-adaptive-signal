@@ -30,6 +30,13 @@ export const analyticsApi = {
   getSummary: (params) => client.get('/analytics/summary', { params }),
 }
 
+export const complaintsApi = {
+  classify: (text) => client.post('/complaints/classify', { text }),
+  classifyBatch: (texts) => client.post('/complaints/classify-batch', { texts }),
+  samples: () => client.get('/complaints/samples'),
+  modelInfo: () => client.get('/complaints/model-info'),
+}
+
 export const reportsApi = {
   csvUrl: (params) => `/api/v1/reports/csv?${new URLSearchParams(params)}`,
   excelUrl: (params) => `/api/v1/reports/excel?${new URLSearchParams(params)}`,

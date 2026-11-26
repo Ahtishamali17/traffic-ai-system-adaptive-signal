@@ -4,6 +4,7 @@ import Landing from './pages/Landing.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import LiveDetection from './pages/LiveDetection.jsx'
 import Analytics from './pages/Analytics.jsx'
+import Complaints from './pages/Complaints.jsx'
 import Reports from './pages/Reports.jsx'
 import Settings from './pages/Settings.jsx'
 import About from './pages/About.jsx'
@@ -42,6 +43,14 @@ export default function App() {
         element={
           <AppShell>
             <Analytics />
+          </AppShell>
+        }
+      />
+      <Route
+        path="/complaints"
+        element={
+          <AppShell>
+            <Complaints />
           </AppShell>
         }
       />
